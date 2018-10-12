@@ -2,7 +2,9 @@ FROM jenkins/jenkins:latest
 MAINTAINER InnoStarterKit
 USER root
 
-ADD docker-start.sh docker-start.sh
+ADD sh/docker-start.sh docker-start.sh
+ADD sh/deploy-ibm.sh deploy-ibm.sh
+ADD sh/update-deploy-ibm.sh update-deploy-ibm.sh
 
 # Install the latest Docker CE binaries
 RUN apt-get update && \
@@ -18,8 +20,6 @@ RUN apt-get update && \
   stable" && \
   apt-get update && \
   apt-get -y install docker-ce
-
-RUN ./docker-start.sh > log.txt
 
 RUN apt-get update && \
   apt-get install -y vim

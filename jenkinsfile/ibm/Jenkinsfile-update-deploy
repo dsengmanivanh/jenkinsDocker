@@ -1,0 +1,26 @@
+//Update and Deploy on Ibm cloud
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'DockerImageName', defaultValue: 'java-backend', description: 'docker image name')
+        string(name: 'Version', defaultValue: 'latest', description: 'docker image name version')
+    }
+    stages {
+        stage ('Tag Docker image for IBM Cloud') {
+            steps {
+               sh "docker tag innostarterkit/${params.DockerImageName} registry.eu-de.bluemix.net/inno/${params.DockerImageName}:${params.Version}"
+            }
+        }
+        stage ('Push image into IBM Cloud') {
+            steps {
+               sh "bx cr login && docker push registry.eu-de.bluemix.net/inno/${params.DockerImageName}:${params.Version}"          
+            }
+        }
+        stage('Update and deploy images') {
+            steps {
+                 sh "/update-deploy-ibm.sh ${params.DockerImageName} ${params.Version}"
+            }
+        }
+    }
+}

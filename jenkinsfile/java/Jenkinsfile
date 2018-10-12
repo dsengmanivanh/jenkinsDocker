@@ -1,0 +1,27 @@
+//Build an docker image -  Backend on Java
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'GitUrl', defaultValue: 'https://github.com/dsengmanivanh/inno-java-backend.git', description: 'git url')
+    }
+    stages {
+        stage('Start') {
+            steps {
+                 sh "/docker-start.sh"
+            }
+        }
+        stage ('Git checkout') {
+            steps {
+                git "${params.GitUrl}"                
+            }
+        }
+        stage ('Build Docker image') {
+            steps {
+                withMaven(jdk: 'java-8', maven: 'mvn-3.5.4') {
+                    sh "mvn clean install dockerfile:build"
+                }
+            }
+        }
+    }
+}
